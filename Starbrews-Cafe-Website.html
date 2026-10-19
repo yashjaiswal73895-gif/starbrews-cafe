@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Starbrews Cafe</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Hind:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: saturated hero band (chili to saffron), sticky category chips, colour-coded menu cards with price pills, hours + services panels. */
+:root {
+  --board: #1d110c;       /* espresso page */
+  --card: #2b1a13;        /* menu card */
+  --ink: #fbf0de;
+  --ink-soft: #cdb89d;
+  --line: #4a3326;
+  --hero-a: #9e1b32;      /* deep red */
+  --hero-b: #e2492f;      /* chili */
+  --hero-c: #f5a623;      /* saffron */
+  --hero-ink: #fff8ea;
+  --gold: #f5b82e;
+  --c1: #f5b82e; --c2: #ff6b4a; --c3: #2fc4b2; --c4: #8fd14f; --c5: #ff9a3c; --c6: #c98a5b; --c7: #e86aa6;
+  --font-display: "Yatra One", Georgia, serif;
+  --font-body: "Hind", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --board:#fff7e8; --card:#ffffff; --ink:#2a1710; --ink-soft:#6a5244; --line:#ecd9b9; --gold:#b86e00;
+    --c1:#c98600; --c2:#d6361a; --c3:#0b8f80; --c4:#4f8f12; --c5:#d96a00; --c6:#8a5a30; --c7:#c2377f; color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --board:#fff7e8; --card:#ffffff; --ink:#2a1710; --ink-soft:#6a5244; --line:#ecd9b9; --gold:#b86e00;
+  --c1:#c98600; --c2:#d6361a; --c3:#0b8f80; --c4:#4f8f12; --c5:#d96a00; --c6:#8a5a30; --c7:#c2377f; color-scheme: light;
+}
+:root[data-theme="dark"] { color-scheme: dark; }
+:root { color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body {
+  background: var(--board); color: var(--ink);
+  font-family: var(--font-body); font-size: 17px; line-height: 1.55; margin: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 40px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--hero-a); }
+.wrap { max-width: 1040px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+
+/* hero band spans full width */
+.band {
+  margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  padding-inline: max(16px, env(safe-area-inset-left, 0px));
+  background: linear-gradient(135deg, var(--hero-a) 0%, var(--hero-b) 55%, var(--hero-c) 120%);
+  color: var(--hero-ink);
+}
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 0; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-size: 22px; }
+.top nav { display: flex; gap: 20px; font-weight: 600; }
+.top nav a { text-decoration: none; opacity: .9; }
+.top nav a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+
+.hero { padding: 32px 0 52px; display: grid; gap: 18px; }
+.eyebrow { font-weight: 700; font-size: 14px; letter-spacing: .16em; text-transform: uppercase; color: #ffe08a; }
+.hero h1 { font-size: clamp(48px, 12vw, 104px); line-height: 1.05; }
+.hero .sub { font-family: var(--font-display); font-size: clamp(22px, 4.5vw, 34px); color: #ffe08a; }
+.hero p { max-width: 54ch; margin: 0; font-size: 19px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 6px; }
+.btn { display: inline-block; padding: 12px 24px; border-radius: 999px; font-weight: 700; text-decoration: none; border: 2px solid transparent; }
+.btn.solid { background: #2a1710; color: #fff3d6; }
+.btn.ghost { border-color: var(--hero-ink); color: var(--hero-ink); }
+.rating { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,0,0,.22); padding: 8px 16px; border-radius: 999px; font-weight: 600; }
+.rating b { font-family: var(--font-display); font-weight: 400; font-size: 24px; color: #ffe08a; }
+
+.catnav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--board); border-bottom: 1px solid var(--line);
+  margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+.catnav .wrap { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+.catnav a { flex: none; padding: 6px 14px; border-radius: 999px; text-decoration: none; font-weight: 600; font-size: 15px; border: 2px solid var(--c); color: var(--c); }
+.catnav a:hover { background: var(--c); color: var(--board); }
+
+section { padding: 52px 0 8px; scroll-margin-top: 64px; }
+section > h2 { font-size: clamp(32px, 6vw, 46px); margin-bottom: 8px; color: var(--gold); }
+.lede { color: var(--ink-soft); margin: 0 0 26px; max-width: 60ch; }
+
+.menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 24px; }
+.cat { min-width: 0; background: var(--card); border-radius: 12px; border-top: 6px solid var(--c); padding: 18px 22px 12px; }
+.cat h3 { font-size: 26px; color: var(--c); padding-bottom: 8px; }
+.cat ul { list-style: none; margin: 0; padding: 0; }
+.cat li { display: flex; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); }
+.cat li .name { min-width: 0; font-weight: 500; }
+.cat li small { color: var(--ink-soft); font-size: 14px; margin-left: 6px; font-weight: 400; }
+.cat li .dots { flex: 1; min-width: 8px; }
+.cat li .price { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; background: var(--c); color: var(--board); padding: 1px 10px; border-radius: 999px; font-size: 15px; }
+.note { margin-top: 22px; font-size: 14px; color: var(--ink-soft); }
+
+.services { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 20px; }
+.panel { background: var(--card); padding: 22px; border-radius: 12px; min-width: 0; border-left: 6px solid var(--c); }
+.panel h3 { font-size: 23px; color: var(--c); margin-bottom: 12px; }
+.panel p { margin: 0; color: var(--ink-soft); }
+.panel p strong { color: var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.chips li { padding: 5px 14px; border-radius: 999px; font-size: 15px; font-weight: 500; background: var(--c); color: var(--board); }
+.btn.map { border-color: var(--c); color: var(--c); margin-top: 14px; }
+.btn.map:hover { background: var(--c); color: var(--board); }
+
+.review { background: linear-gradient(135deg, var(--hero-a), var(--hero-b)); color: var(--hero-ink); padding: 28px; border-radius: 12px; max-width: 640px; }
+.review .stars { color: #ffe08a; letter-spacing: .15em; font-size: 20px; }
+.review p { font-family: var(--font-display); font-size: 28px; line-height: 1.3; margin: 8px 0 12px; }
+.review cite { font-style: normal; font-size: 15px; opacity: .92; }
+
+footer { margin-top: 60px; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding: 30px max(16px, env(safe-area-inset-left, 0px)); background: var(--hero-a); color: var(--hero-ink); }
+footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 15px; }
+footer .big { font-family: var(--font-display); font-size: 26px; }
+footer a { color: #ffe08a; }
+</style>
+</head>
+<body>
+
+
+<div class="band">
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">Starbrews Cafe</div>
+      <nav aria-label="Main"><a href="#menu">Menu</a><a href="#visit">Visit</a><a href="#reviews">Reviews</a></nav>
+    </header>
+    <div class="hero">
+      <div class="eyebrow">Cafe and quick bites</div>
+      <h1>Starbrews Cafe</h1>
+      <div class="sub">Flavour that feels like home</div>
+      <p>Dosa, chowmein, paratha and a hot coffee for ₹20. Sit down with friends, take it away, or have it delivered.</p>
+      <div class="cta">
+        <a class="btn solid" href="#menu">See the menu</a>
+        <a class="btn ghost" href="https://www.google.com/maps/search/?api=1&amp;query=Starbrews+Cafe" target="_blank" rel="noopener">Get directions</a>
+        <span class="rating"><b>5.0</b> on Google</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="catnav" aria-label="Menu categories">
+  <div class="wrap">
+    <a style="--c:var(--c1)" href="#south-indian">South Indian &amp; Breakfast</a>
+    <a style="--c:var(--c2)" href="#chowmein">Chowmein</a>
+    <a style="--c:var(--c3)" href="#chillys">Chilly's</a>
+    <a style="--c:var(--c4)" href="#rice">Rice</a>
+    <a style="--c:var(--c5)" href="#soup">Soup</a>
+    <a style="--c:var(--c6)" href="#coffee">Coffee</a>
+    <a style="--c:var(--c7)" href="#lassi">Lassi</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <section id="menu">
+    <h2>Menu</h2>
+    <p class="lede">Prices in rupees. Everything is made to order.</p>
+    <div class="menu">
+      <div class="cat" id="south-indian" style="--c:var(--c1)">
+        <h3>South Indian &amp; Breakfast</h3>
+        <ul>
+          <li><span class="name">Idli<small>2 pcs</small></span><span class="dots"></span><span class="price">₹20</span></li>
+          <li><span class="name">Dosa Plain</span><span class="dots"></span><span class="price">₹40</span></li>
+          <li><span class="name">Masala Dosa</span><span class="dots"></span><span class="price">₹50</span></li>
+          <li><span class="name">Paneer Dosa</span><span class="dots"></span><span class="price">₹100</span></li>
+          <li><span class="name">Uttapam</span><span class="dots"></span><span class="price">₹50</span></li>
+          <li><span class="name">Sambhar Vada</span><span class="dots"></span><span class="price">₹30</span></li>
+          <li><span class="name">Poha</span><span class="dots"></span><span class="price">₹20</span></li>
+          <li><span class="name">Aloo Paratha<small>2 pcs</small></span><span class="dots"></span><span class="price">₹60</span></li>
+          <li><span class="name">Gobi Paratha<small>2 pcs</small></span><span class="dots"></span><span class="price">₹70</span></li>
+          <li><span class="name">Cholle Bhutt</span><span class="dots"></span><span class="price">₹40</span></li>
+        </ul>
+      </div>
+
+      <div class="cat" id="chowmein" style="--c:var(--c2)">
+        <h3>Chowmein</h3>
+        <ul>
+          <li><span class="name">Veg Chowmein</span><span class="dots"></span><span class="price">₹40</span></li>
+          <li><span class="name">Manchurian Chowmein</span><span class="dots"></span><span class="price">₹60</span></li>
+          <li><span class="name">Paneer Chowmein</span><span class="dots"></span><span class="price">₹70</span></li>
+        </ul>
+      </div>
+
+      <div class="cat" id="chillys" style="--c:var(--c3)">
+        <h3>Chilly's</h3>
+        <ul>
+          <li><span class="name">Manchurian Chilli</span><span class="dots"></span><span class="price">₹50</span></li>
+          <li><span class="name">Soya Chilli</span><span class="dots"></span><span class="price">₹60</span></li>
+          <li><span class="name">Aloo Chilli</span><span class="dots"></span><span class="price">₹60</span></li>
+          <li><span class="name">Paneer Chilli</span><span class="dots"></span><span class="price">₹70</span></li>
+          <li><span class="name">Chana Chilli</span><span class="dots"></span><span class="price">₹70</span></li>
+        </ul>
+      </div>
+
+      <div class="cat" id="rice" style="--c:var(--c4)">
+        <h3>Rice</h3>
+        <ul>
+          <li><span class="name">Veg Fried Rice</span><span class="dots"></span><span class="price">₹50</span></li>
+          <li><span class="name">Schezwan Rice</span><span class="dots"></span><span class="price">₹60</span></li>
+          <li><span class="name">Paneer Rice</span><span class="dots"></span><span class="price">₹70</span></li>
+          <li><span class="name">Manchurian Rice</span><span class="dots"></span><span class="price">₹70</span></li>
+        </ul>
+      </div>
+
+      <div class="cat" id="soup" style="--c:var(--c5)">
+        <h3>Soup</h3>
+        <ul>
+          <li><span class="name">Mix Veg Soup</span><span class="dots"></span><span class="price">₹30</span></li>
+          <li><span class="name">Sweet Corn Soup</span><span class="dots"></span><span class="price">₹30</span></li>
+          <li><span class="name">Tomato Soup</span><span class="dots"></span><span class="price">₹30</span></li>
+          <li><span class="name">Manchurian Soup</span><span class="dots"></span><span class="price">₹40</span></li>
+        </ul>
+      </div>
+
+      <div class="cat" id="coffee" style="--c:var(--c6)">
+        <h3>Coffee</h3>
+        <ul>
+          <li><span class="name">Espresso</span><span class="dots"></span><span class="price">₹15</span></li>
+          <li><span class="name">Hot Coffee</span><span class="dots"></span><span class="price">₹20</span></li>
+          <li><span class="name">Cold Coffee</span><span class="dots"></span><span class="price">₹60</span></li>
+        </ul>
+      </div>
+
+      <div class="cat" id="lassi" style="--c:var(--c7)">
+        <h3>Lassi</h3>
+        <ul>
+          <li><span class="name">Plain Lassi</span><span class="dots"></span><span class="price">₹30</span></li>
+          <li><span class="name">Dry Fruit Lassi</span><span class="dots"></span><span class="price">₹50</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">Shakes, sandwiches, pasta, fries and mocktails are also on the cafe's printed menu.</p>
+  </section>
+
+  <section id="visit">
+    <h2>Dine in or take it home</h2>
+    <p class="lede">A casual cafe that works for a quick bite, a group, or the kids.</p>
+    <div class="services">
+      <div class="panel" style="--c:var(--c3)">
+        <h3>How to order</h3>
+        <ul class="chips">
+          <li>Dine-in</li><li>Takeaway</li><li>Delivery</li><li>Kerbside pickup</li><li>Drive-through</li>
+        </ul>
+      </div>
+      <div class="panel" style="--c:var(--c7)">
+        <h3>Good for</h3>
+        <ul class="chips">
+          <li>Groups</li><li>Kids</li><li>Coffee</li><li>Quick bites</li><li>Small plates</li>
+        </ul>
+      </div>
+      <div class="panel" style="--c:var(--c1)">
+        <h3>Find us</h3>
+        <p><strong>Open every day, 5:30 am to 10:30 pm.</strong></p>
+        <p style="margin-top:8px">Near Mata Mandir. Open the map for directions.</p>
+        <a class="btn map" href="https://www.google.com/maps/search/?api=1&amp;query=Starbrews+Cafe" target="_blank" rel="noopener">Open in Google Maps</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="reviews">
+    <h2>What guests say</h2>
+    <div class="review">
+      <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+      <p>Cute cozy cafe, liked its food.</p>
+      <cite>Snehal Jain Lunia, Google review</cite>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="big">Starbrews Cafe</div>
+      <div>Open daily, 5:30 am to 10:30 pm</div>
+    </div>
+    <div>Instagram: <a href="https://www.instagram.com/starbrews_cafe" target="_blank" rel="noopener">@starbrews_cafe</a></div>
+  </div>
+</footer>
+
+</body>
+</html>
